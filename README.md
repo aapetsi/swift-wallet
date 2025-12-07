@@ -1,6 +1,6 @@
 # Getting Started
 
-clone this repo `git clone https://github.com/aapetsi`
+clone this repo `git clone https://github.com/aapetsi/swift-wallet.git`
 
 install dependencies `npm install`
 
