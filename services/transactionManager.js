@@ -1,9 +1,13 @@
-const users = require('../data/users')
-const transactions = require('../data/transactions')
+// const users = require('../data/users')
+// const transactions = require('../data/transactions')
 const ChainSelector = require('./chainSelector')
 const GasPriceOracle = require('./gasPriceOracle')
 const Blockchain = require('./blockchain')
 const BridgeManager = require('./bridgeManager')
+const User = require('../database/models/User')
+const { updateBalance } = require('../database/helperMethods')
+const sequelize = require('../database/sequelize')
+const Transaction = require('../database/models/Transaction')
 
 const chainSelector = new ChainSelector()
 const blockchain = new Blockchain()
@@ -13,8 +17,8 @@ const bridgeManager = new BridgeManager()
 // Transaction Manager
 class TransactionManager {
   async executeTransaction(fromUserId, toUserId, amount) {
-    const fromUser = users.get(fromUserId)
-    const toUser = users.get(toUserId)
+    const fromUser = await User.findByPk(fromUserId) // users.get(fromUserId)
+    const toUser = await User.findByPk(toUserId) // users.get(toUserId)
 
     if (!fromUser) throw new Error('Sender not found')
     if (!toUser) throw new Error('Recipient not found')
@@ -32,35 +36,55 @@ class TransactionManager {
 
     const { selectedChain, gasCost } = selection
 
+    const t = await sequelize.transaction()
     // Execute blockchain transaction
-    const transactionResult = await blockchain.sendTransaction(
-      selectedChain,
-      fromUserId,
-      toUserId,
-      amount
-    )
+    try {
+      const transactionResult = await blockchain.sendTransaction(
+        selectedChain,
+        fromUserId,
+        toUserId,
+        amount
+      )
 
-    // update balances
-    fromUser.balances[selectedChain] -= amount + gasCost
-    toUser.balances[selectedChain] += amount
+      // update balances
+      await updateBalance(fromUserId, selectedChain, -(amount + gasCost))
+      await updateBalance(toUserId, selectedChain, amount)
+      // fromUser.balances[selectedChain] -= amount + gasCost
+      // toUser.balances[selectedChain] += amount
 
-    // Save transaction to memory
-    const transaction = {
-      ...transactionResult,
-      gasCost,
-      netAmount: amount,
-      totalDeducted: amount + gasCost
-    }
-    transactions.set(transactionResult.transactionHash, transaction)
+      // Save transaction to database
+      const transaction = await Transaction.create(
+        {
+          txHash: transactionResult.transactionHash,
+          type: 'transfer',
+          fromUserId,
+          toUserId,
+          chain: selectedChain,
+          amount,
+          gasCost,
+          bridgeCost: 0,
+          totalDeducted: amount + gasCost,
+          status: 'confirmed',
+          blockNumber: transactionResult.blockNumber,
+          bridged: false
+        },
+        { transaction: t }
+      )
 
-    return {
-      success: true,
-      transaction
+      await t.commit()
+
+      return {
+        success: true,
+        transaction: transaction.toJSON()
+      }
+    } catch (error) {
+      await t.rollback()
+      throw error
     }
   }
 
   async executeWithBridge(fromUserId, toUserId, amount) {
-    const fromUser = users.get(fromUserId)
+    // const fromUser = await User.findByPk(fromUserId) // users.get(fromUserId)
 
     // Get all gas costs to find cheapest destination chain
     const gasCosts = await gasPriceOracle.getAllGasCosts()
@@ -75,7 +99,7 @@ class TransactionManager {
       amount + targetGasCost,
       targetChain
     )
-
+    console.log(routes)
     if (routes.length === 0) {
       throw new Error('No viable bridge routes available')
     }

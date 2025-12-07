@@ -1,33 +1,33 @@
-const users = require('../data/users')
+const { getUserBalance } = require('../database/helperMethods')
+const User = require('../database/models/User')
 const GasPriceOracle = require('./gasPriceOracle')
 const gasPriceOracle = new GasPriceOracle()
 
 // Chain Selector
 class ChainSelector {
   async selectOptimalChain(userId, amount) {
-    const user = users.get(userId)
+    const user = await User.findByPk(userId) // users.get(userId)
 
     if (!user) throw new Error('User not found')
 
     // Retrieve gas costs for all chains
     const gasCosts = await gasPriceOracle.getAllGasCosts()
+    const { balancesByChain } = await getUserBalance(userId)
 
     // Find chains with sufficient balance for the transaction
     const viableChains = gasCosts
-      .filter(({ chain }) => user.balances[chain] >= amount)
+      .filter(({ chain }) => balancesByChain[chain] >= amount)
       .map((gasInfo) => ({
         ...gasInfo,
-        balance: user.balances[gasInfo.chain],
+        balance: balancesByChain[gasInfo.chain],
         totalCost: amount + gasInfo.estimatedCostUSDC
       }))
       .sort((a, b) => a.estimatedCostUSDC - b.estimatedCostUSDC)
 
     if (viableChains.length === 0) {
       // check if user has total balance across all the blockchains
-      const totalBalance = Object.values(user.balances).reduce(
-        (a, b) => a + b,
-        0
-      )
+      const { total: totalBalance } = await getUserBalance(userId)
+
       if (totalBalance >= amount) {
         return {
           success: false,

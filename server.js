@@ -1,12 +1,13 @@
 const express = require('express')
+const app = express()
+
 const GasPriceOracle = require('./services/gasPriceOracle')
 const ChainSelector = require('./services/chainSelector')
-// const BridgeManager = require('./services/bridgeManager')
-// const MockBlockchain = require('./services/blockchain')
 const TransactionManager = require('./services/transactionManager')
-const app = express()
-const users = require('./data/users')
-const transactions = require('./data/transactions')
+const User = require('./database/models/User')
+
+const initializeDatabase = require('./database/initializeDatabase')
+const { getUserBalance } = require('./database/helperMethods')
 
 // Express Middleware
 app.use(express.json())
@@ -15,24 +16,21 @@ const gasPriceOracle = new GasPriceOracle()
 
 const chainSelector = new ChainSelector()
 
-// const bridgeManager = new BridgeManager()
-
-// const blockchain = new MockBlockchain()
-
 const transactionManager = new TransactionManager()
 
 // api endpoints
-app.get('/api/balance/:userId', (req, res) => {
+app.get('/api/balance/:userId', async (req, res) => {
   const { userId } = req.params
-  const user = users.get(userId)
+  const user = await User.findByPk(userId) // users.get(userId)
 
   if (!user) return res.status(404).json({ error: 'User not found' })
 
-  const totalBalance = Object.values(user.balances).reduce((a, b) => a + b, 0)
+  const { total, balancesByChain } = await getUserBalance(userId) // Object.values(user.balances).reduce((a, b) => a + b, 0)
 
   res.status(200).json({
     userId,
-    totalBalance: parseFloat(totalBalance.toFixed(2))
+    totalBalance: parseFloat(total.toFixed(2)),
+    balancesByChain
   })
 })
 
@@ -113,6 +111,8 @@ app.get('/health', async (req, res) => {
 
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT, () => {
-  console.log(`🚀 SwiftWallet Server is running on port ${PORT}`)
+initializeDatabase().then(() => {
+  app.listen(PORT, () => {
+    console.log(`🚀 SwiftWallet Server is running on port ${PORT}`)
+  })
 })

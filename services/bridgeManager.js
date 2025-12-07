@@ -1,5 +1,11 @@
-const users = require('../data/users')
-const transactions = require('../data/transactions')
+// const users = require('../data/users')
+// const transactions = require('../data/transactions')
+
+const { getUserBalance, updateBalance } = require('../database/helperMethods')
+const Transaction = require('../database/models/Transaction')
+const User = require('../database/models/User')
+const sequelize = require('../database/sequelize')
+
 // Bridge Manager
 class BridgeManager {
   constructor() {
@@ -20,66 +26,110 @@ class BridgeManager {
   }
 
   async executeBridge(userId, fromChain, toChain, amount) {
-    const user = users.get(userId)
-    if (!user) throw new Error('User not found')
+    const t = await sequelize.transaction()
 
-    const bridgeCost = this.getBridgeCost(fromChain, toChain)
-    const totalRequired = amount + bridgeCost
+    try {
+      const user = await User.findByPk(userId) // users.get(userId)
+      if (!user) throw new Error('User not found')
 
-    if (user.balances[fromChain] < totalRequired)
-      throw new Error(
-        `Insufficient balance on ${fromChain}. Need ${totalRequired}, current balance is ${user.balances[fromChain]}`
+      const bridgeCost = this.getBridgeCost(fromChain, toChain)
+      const totalRequired = amount + bridgeCost
+
+      const currentBalance = await getUserBalance(userId, fromChain)
+
+      if (currentBalance < totalRequired)
+        throw new Error(
+          `Insufficient balance on ${fromChain}. Need ${totalRequired}, current balance is ${currentBalance} USDC`
+        )
+
+      const bridgeTransactionHash = `0*BRIDGE${Math.random()
+        .toString(16)
+        .substring(2, 58)}`
+      const timestamp = new Date().toISOString()
+
+      // Deduct from source chain (including bridge fee)
+      await updateBalance(userId, fromChain, -totalRequired)
+      // user.balances[fromChain] -= totalRequired
+
+      // Add to destination chain
+      await updateBalance(userId, toChain, amount)
+      // user.balances[toChain] += amount
+
+      const bridgeTransaction = await Transaction.create(
+        {
+          txHash: bridgeTxHash,
+          type: 'bridge',
+          fromUserId: userId,
+          toUserId: null,
+          chain: toChain,
+          fromChain,
+          toChain,
+          amount,
+          bridgeCost,
+          gasCost: 0,
+          totalDeducted: totalRequired,
+          status: 'confirmed',
+          bridged: true
+        },
+        { transaction: t }
       )
 
-    const bridgeTransactionHash = `0*BRIDGE${Math.random()
-      .toString(16)
-      .substring(2, 58)}`
-    const timestamp = new Date().toISOString()
+      await t.commit()
 
-    // Deduct from source chain (including bridge fee)
-    user.balances[fromChain] -= totalRequired
-
-    // Add to destination chain
-    user.balances[toChain] += amount
-
-    const bridgeTransaction = {
-      transactionHash: bridgeTransactionHash,
-      type: 'bridge',
-      fromChain,
-      toChain,
-      userId,
-      amount,
-      bridgeCost,
-      totalDeducted: totalRequired,
-      status: 'confirmed',
-      timestamp
+      return bridgeTransaction.toJSON()
+    } catch (error) {
+      await t.rollback()
+      throw error
     }
-
-    transactions.set(bridgeTransactionHash, bridgeTransaction)
-    return bridgeTransaction
   }
 
   async findOptimalBridgeRoute(userId, targetAmount, targetChain) {
-    const user = users.get(userId)
+    const user = await User.findByPk(userId) //users.get(userId)
     if (!user) throw new Error('User not found')
+
+    const { balancesByChain } = await getUserBalance(userId)
 
     const routes = []
 
-    for (const [chain, balance] of Object.entries(user.balances)) {
+    for (const [chain, balance] of Object.entries(balancesByChain)) {
       if (chain === targetChain) continue
 
       const bridgeCost = this.getBridgeCost(chain, targetChain)
       const maxTransferable = Math.max(0, balance - bridgeCost)
 
-      if (maxTransferable > 0) {
+      if (maxTransferable >= targetAmount) {
         routes.push({
           fromChain: chain,
           toChain: targetChain,
           availableBalance: balance,
           bridgeCost,
           maxTransferable,
-          totalCost: bridgeCost
+          totalCost: bridgeCost,
+          canFulfill: true
         })
+      }
+    }
+
+    // if all the routes can't fulfill the amount, show all the vaible routes
+    if (routes.length === 0) {
+      for (const [chain, balance] of Object.entries(balancesByChain)) {
+        if (chain === targetChain) continue
+
+        const bridgeCost = this.getBridgeCost(chain, targetChain)
+        const maxTransferable = Math.max(0, balance - bridgeCost)
+
+        if (maxTransferable > 0) {
+          routes.push({
+            fromChain: chain,
+            toChain: targetChain,
+            availableBalance: balance,
+            bridgeCost,
+            maxTransferable,
+            totalCost: bridgeCost,
+            canFulfill: false,
+            shortfall: targetAmount - maxTransferable
+          })
+        }
       }
     }
 

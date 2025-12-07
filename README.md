@@ -25,7 +25,7 @@ curl http://localhost:3000/api/balance/user1 | jq .
 ```bash
 curl -X POST http://localhost:3000/api/send \
  -H "Content-Type: application/json" \
- -d '{"from":"user1","to":"user2","amount":300}' | jq .
+ -d '{"from":"user1","to":"user2","amount":2000}' | jq .
 ```
 
 # Get gas prices

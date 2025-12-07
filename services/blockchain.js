@@ -1,4 +1,5 @@
-const transactions = require('../data/transactions')
+const Transaction = require('../database/models/Transaction')
+
 // Mock Blockchain
 class MockBlockchain {
   async sendTransaction(chain, from, to, amount) {
@@ -18,11 +19,13 @@ class MockBlockchain {
   }
 
   async getTransaction(transactionHash) {
-    const transaction = transactions.get(transactionHash)
+    const transaction = await Transaction.findOne({
+      where: { txHash: transactionHash }
+    })
 
     if (!transaction) throw new Error('Transaction not found')
 
-    return transaction
+    return transaction.toJSON()
   }
 }
 
