@@ -8,19 +8,19 @@ run the project using `npm start`
 
 The following api endpoints are available to test. Copy and paste in your terminal to see the responses
 
-# Check health
+## Check health
 
 ```bash
 curl http://localhost:3000/health | jq .
 ```
 
-# Check balance
+## Check balance
 
 ```bash
 curl http://localhost:3000/api/balance/user1 | jq .
 ```
 
-# Send USDC
+## Send USDC
 
 ```bash
 curl -X POST http://localhost:3000/api/send \
@@ -28,13 +28,13 @@ curl -X POST http://localhost:3000/api/send \
  -d '{"from":"user1","to":"user2","amount":2000}' | jq .
 ```
 
-# Get gas prices
+## Get gas prices
 
 ```bash
 curl http://localhost:3000/api/gas-prices | jq .
 ```
 
-# Get best chain
+## Get best chain
 
 ```bash
 curl -X POST http://localhost:3000/api/estimate \
@@ -42,7 +42,7 @@ curl -X POST http://localhost:3000/api/estimate \
  -d '{"userId":"user1","amount":10}' | jq .
 ```
 
-# Get transaction
+## Get transaction
 
 ```bash
 curl http://localhost:3000/api/transaction/<hash> | jq .
