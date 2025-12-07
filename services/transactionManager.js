@@ -1,5 +1,3 @@
-// const users = require('../data/users')
-// const transactions = require('../data/transactions')
 const ChainSelector = require('./chainSelector')
 const GasPriceOracle = require('./gasPriceOracle')
 const Blockchain = require('./blockchain')
@@ -17,8 +15,8 @@ const bridgeManager = new BridgeManager()
 // Transaction Manager
 class TransactionManager {
   async executeTransaction(fromUserId, toUserId, amount) {
-    const fromUser = await User.findByPk(fromUserId) // users.get(fromUserId)
-    const toUser = await User.findByPk(toUserId) // users.get(toUserId)
+    const fromUser = await User.findByPk(fromUserId)
+    const toUser = await User.findByPk(toUserId)
 
     if (!fromUser) throw new Error('Sender not found')
     if (!toUser) throw new Error('Recipient not found')
@@ -49,8 +47,6 @@ class TransactionManager {
       // update balances
       await updateBalance(fromUserId, selectedChain, -(amount + gasCost))
       await updateBalance(toUserId, selectedChain, amount)
-      // fromUser.balances[selectedChain] -= amount + gasCost
-      // toUser.balances[selectedChain] += amount
 
       // Save transaction to database
       const transaction = await Transaction.create(

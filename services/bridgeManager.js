@@ -29,7 +29,7 @@ class BridgeManager {
     const t = await sequelize.transaction()
 
     try {
-      const user = await User.findByPk(userId) // users.get(userId)
+      const user = await User.findByPk(userId)
       if (!user) throw new Error('User not found')
 
       const bridgeCost = this.getBridgeCost(fromChain, toChain)
@@ -49,11 +49,9 @@ class BridgeManager {
 
       // Deduct from source chain (including bridge fee)
       await updateBalance(userId, fromChain, -totalRequired)
-      // user.balances[fromChain] -= totalRequired
 
       // Add to destination chain
       await updateBalance(userId, toChain, amount)
-      // user.balances[toChain] += amount
 
       const bridgeTransaction = await Transaction.create(
         {
@@ -84,7 +82,7 @@ class BridgeManager {
   }
 
   async findOptimalBridgeRoute(userId, targetAmount, targetChain) {
-    const user = await User.findByPk(userId) //users.get(userId)
+    const user = await User.findByPk(userId)
     if (!user) throw new Error('User not found')
 
     const { balancesByChain } = await getUserBalance(userId)

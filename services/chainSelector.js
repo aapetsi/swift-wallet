@@ -6,7 +6,7 @@ const gasPriceOracle = new GasPriceOracle()
 // Chain Selector
 class ChainSelector {
   async selectOptimalChain(userId, amount) {
-    const user = await User.findByPk(userId) // users.get(userId)
+    const user = await User.findByPk(userId)
 
     if (!user) throw new Error('User not found')
 

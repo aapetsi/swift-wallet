@@ -25,7 +25,7 @@ app.get('/api/balance/:userId', async (req, res) => {
 
   if (!user) return res.status(404).json({ error: 'User not found' })
 
-  const { total, balancesByChain } = await getUserBalance(userId) // Object.values(user.balances).reduce((a, b) => a + b, 0)
+  const { total, balancesByChain } = await getUserBalance(userId)
 
   res.status(200).json({
     userId,
