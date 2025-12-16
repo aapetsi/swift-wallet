@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">22.22% </span>
+                <span class="strong">88.88% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>2/9</span>
+                <span class='fraction'>8/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>1/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>2/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -100,12 +100,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -116,13 +114,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -131,11 +131,11 @@
 &nbsp;
 // Mock Blockchain
 class MockBlockchain {
-<span class="fstat-no" title="function not covered" >  as</span>ync sendTransaction(chain, from, to, amount) {
-    const transactionHash = <span class="cstat-no" title="statement not covered" >`0x${Math.random().toString(16).substring(2, 64)}`</span>
-    const timestamp = <span class="cstat-no" title="statement not covered" >new Date().toISOString()</span>
+  async sendTransaction(chain, from, to, amount) {
+    const transactionHash = `0x${Math.random().toString(16).substring(2, 64)}`
+    const timestamp = new Date().toISOString()
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return {</span>
+    return {
       transactionHash,
       chain,
       from,
@@ -147,14 +147,14 @@ class MockBlockchain {
     }
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  as</span>ync getTransaction(transactionHash) {
-    const transaction = <span class="cstat-no" title="statement not covered" >await Transaction.findOne({</span>
+  async getTransaction(transactionHash) {
+    const transaction = await Transaction.findOne({
       where: { txHash: transactionHash }
     })
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (!transaction) <span class="cstat-no" title="statement not covered" >throw new Error('Transaction not found')</span></span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!transaction) <span class="cstat-no" title="statement not covered" >throw new Error('Transaction not found')</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return transaction.toJSON()</span>
+    return transaction.toJSON()
   }
 }
 &nbsp;
@@ -166,7 +166,7 @@ module.exports = MockBlockchain
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-15T21:43:57.085Z
+                at 2025-12-16T04:17:57.802Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

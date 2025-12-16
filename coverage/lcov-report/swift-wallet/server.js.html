@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">60% </span>
+                <span class="strong">81.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>36/60</span>
+                <span class='fraction'>49/60</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">38.09% </span>
+                <span class="strong">76.19% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>8/21</span>
+                <span class='fraction'>16/21</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/8</span>
+                <span class='fraction'>6/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">62.06% </span>
+                <span class="strong">84.48% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>36/58</span>
+                <span class='fraction'>49/58</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -223,41 +223,41 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -345,42 +345,42 @@ app.get('/api/balance/:userId', async (req, res) =&gt; {
   })
 })
 &nbsp;
-app.post('/api/send', <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
-<span class="cstat-no" title="statement not covered" >  try {</span>
-    const { to, from, amount } = <span class="cstat-no" title="statement not covered" >req.body</span>
-    const amountNum = <span class="cstat-no" title="statement not covered" >Number(amount)</span>
+app.post('/api/send', async (req, res) =&gt; {
+  try {
+    const { to, from, amount } = req.body
+    const amountNum = Number(amount)
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (!to || !from || !Number.isFinite(amountNum) || amountNum &lt;= 0)</span>
-<span class="cstat-no" title="statement not covered" >      return res.status(400).json({</span>
+    if (!to || !from || !Number.isFinite(amountNum) || amountNum &lt;= 0)
+      return res.status(400).json({
         error:
           'Make sure sender, recipient and amount have all been provided and amount must be a positive number'
       })
 &nbsp;
-    const result = <span class="cstat-no" title="statement not covered" >await transactionManager.executeTransaction(</span>
+    const result = await transactionManager.executeTransaction(
       from,
       to,
       amountNum
     )
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (!result.success) <span class="cstat-no" title="statement not covered" >return res.status(400).json(result)</span></span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!result.success) <span class="cstat-no" title="statement not covered" >return res.status(400).json(result)</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    res.status(200).json(result)</span>
+    res.status(200).json(result)
   } catch (error) {
 <span class="cstat-no" title="statement not covered" >    return res.status(500).json({ error: error.message })</span>
   }
 })
 &nbsp;
-app.get('/api/transaction/:transactionHash', <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
-<span class="cstat-no" title="statement not covered" >  try {</span>
-    const { transactionHash } = <span class="cstat-no" title="statement not covered" >req.params</span>
-    const transaction = <span class="cstat-no" title="statement not covered" >await transactionManager.getTransactionStatus(</span>
+app.get('/api/transaction/:transactionHash', async (req, res) =&gt; {
+  try {
+    const { transactionHash } = req.params
+    const transaction = await transactionManager.getTransactionStatus(
       transactionHash
     )
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (!transaction)</span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!transaction)
 <span class="cstat-no" title="statement not covered" >      return res.status(404).json({ message: 'Transaction not found' })</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return res.status(200).json(transaction)</span>
+    return res.status(200).json(transaction)
   } catch (error) {
 <span class="cstat-no" title="statement not covered" >    return res.status(500).json({ error: error.message })</span>
   }
@@ -439,7 +439,7 @@ module.exports = app
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-15T21:43:57.085Z
+                at 2025-12-16T04:17:57.802Z
             </div>
         <script src="../prettify.js"></script>
         <script>

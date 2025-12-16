@@ -3,6 +3,8 @@ const server = require('../server')
 const initializeDatabase = require('../database/initializeDatabase')
 const sequelize = require('../database/sequelize')
 
+let transactionHash
+
 describe('Test api endpoints', () => {
   beforeAll(async () => {
     await initializeDatabase()
@@ -43,5 +45,27 @@ describe('Test api endpoints', () => {
 
     expect(res.statusCode).toEqual(200)
     expect(res.body.selectedChain).toEqual('solana')
+  })
+
+  it('POST /api/send', async () => {
+    const res = await request(server)
+      .post('/api/send')
+      .send({ to: 'user2', from: 'user1', amount: 300 })
+
+    transactionHash = res.body.transaction.txHash
+    expect(res.statusCode).toEqual(200)
+    expect(res.body.success).toEqual(true)
+  })
+
+  it('POST /api/send fails to send', async () => {
+    const res = await request(server).post('/api/send').send({})
+
+    expect(res.statusCode).toEqual(400)
+  })
+
+  it('GET /api/transaction/:transactionHash', async () => {
+    const res = await request(server).get(`/api/transaction/${transactionHash}`)
+
+    expect(res.statusCode).toEqual(200)
   })
 })
