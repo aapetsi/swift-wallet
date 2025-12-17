@@ -95,7 +95,7 @@ class TransactionManager {
       amount + targetGasCost,
       targetChain
     )
-    console.log(routes)
+
     if (routes.length === 0) {
       throw new Error('No viable bridge routes available')
     }

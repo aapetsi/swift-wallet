@@ -10,19 +10,22 @@ const sequelize = require('../database/sequelize')
 class BridgeManager {
   constructor() {
     this.bridgeCosts = {
-      ethereum: { to: { polygon: 5, arbitrum: 10, optimism: 10 } },
-      polygon: { to: { ethereum: 15, arbitrum: 8, optimism: 8 } },
-      arbitrum: { to: { ethereum: 12, polygon: 8, optimism: 5 } },
-      optimism: { to: { ethereum: 12, polygon: 8, arbitrum: 5 } }
+      ethereum: {
+        to: { polygon: 5, arbitrum: 10, optimism: 10, solana: 0.01 }
+      },
+      polygon: { to: { ethereum: 15, arbitrum: 8, optimism: 8, solana: 0.01 } },
+      arbitrum: { to: { ethereum: 12, polygon: 8, optimism: 5, solana: 0.01 } },
+      optimism: { to: { ethereum: 12, polygon: 8, arbitrum: 5, solana: 0.01 } },
+      solana: { to: { ethereum: 12, polygon: 8, arbitrum: 5, optimism: 0.01 } }
     }
   }
 
   getBridgeCost(fromChain, toChain) {
     if (fromChain === toChain) return 0
     const fromCfg = this.bridgeCosts[fromChain]
-    if (!fromCfg || !fromCfg.to) return Infinity
     const cost = fromCfg.to[toChain]
-    return typeof cost === 'number' ? cost : Infinity
+
+    return cost
   }
 
   async executeBridge(userId, fromChain, toChain, amount) {
@@ -86,7 +89,6 @@ class BridgeManager {
     if (!user) throw new Error('User not found')
 
     const { balancesByChain } = await getUserBalance(userId)
-
     const routes = []
 
     for (const [chain, balance] of Object.entries(balancesByChain)) {
