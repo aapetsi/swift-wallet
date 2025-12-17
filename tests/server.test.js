@@ -68,6 +68,14 @@ describe('Test api endpoints', () => {
     expect(res.body.success).toEqual(true)
   })
 
+  it('POST /api/send with auto bridging', async () => {
+    const res = await request(server)
+      .post('/api/send')
+      .send({ to: 'user2', from: 'user1', amount: 1001 })
+
+    expect(res.body.error).toMatch(/insufficient balance to bridge/i)
+  })
+
   it('POST /api/send fails with invalid sender', async () => {
     const res = await request(server)
       .post('/api/send')
