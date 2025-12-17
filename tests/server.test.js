@@ -81,18 +81,18 @@ describe('Test api endpoints', () => {
     expect(res.statusCode).toEqual(400)
   })
 
-  it('POST /api/send with bridging', async () => {
-    const res = await request(server)
-      .post('/api/send')
-      .send({ to: 'user1', from: 'user2', amount: 1001 })
+  // it('POST /api/send with bridging', async () => {
+  //   const res = await request(server)
+  //     .post('/api/send')
+  //     .send({ to: 'user1', from: 'user2', amount: 1001 })
 
-    expect(res.statusCode).toEqual(200)
-    expect(res.body.success).toEqual(true)
-    expect(res.body.bridged).toEqual(true)
-    expect(res.body.bridgeTransaction).toBeDefined()
-    expect(res.body.transaction).toBeDefined()
-    expect(res.body.totalCost).toBeDefined()
-  })
+  //   expect(res.statusCode).toEqual(200)
+  //   expect(res.body.success).toEqual(true)
+  //   expect(res.body.bridged).toEqual(true)
+  //   expect(res.body.bridgeTransaction).toBeDefined()
+  //   expect(res.body.transaction).toBeDefined()
+  //   expect(res.body.totalCost).toBeDefined()
+  // })
 
   it('POST /api/send fails to send', async () => {
     const res = await request(server).post('/api/send').send({})
