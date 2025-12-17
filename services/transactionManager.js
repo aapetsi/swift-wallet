@@ -126,33 +126,45 @@ class TransactionManager {
       amount
     )
 
-    // Update balances
-    fromUser.balances[targetChain] -= amount + targetGasCost
-    const toUser = this.users.get(toUserId)
-    toUser.balances[targetChain] += amount
+    const t = await sequelize.transaction()
+    try {
+      // Update balances
+      await updateBalance(fromUserId, targetChain, -(amount + targetGasCost), {
+        transaction: t
+      })
+      await updateBalance(toUserId, targetChain, amount, { transaction: t })
 
-    // Store transaction
-    const transaction = {
-      ...txResult,
-      gasCost: targetGasCost,
-      netAmount: amount,
-      totalDeducted: amount + targetGasCost,
-      bridged: true,
-      bridgeDetails: {
-        fromChain: bridgeTx.fromChain,
-        toChain: bridgeTx.toChain,
-        bridgeCost: bridgeTx.bridgeCost,
-        bridgeTxHash: bridgeTx.transactionHash
+      // Store transaction
+      const transaction = await Transaction.create(
+        {
+          txHash: txResult.transactionHash,
+          type: 'transfer',
+          fromUserId,
+          toUserId,
+          chain: targetChain,
+          amount,
+          gasCost: targetGasCost,
+          bridgeCost: bridgeTx.bridgeCost,
+          totalDeducted: amount + targetGasCost,
+          status: 'confirmed',
+          blockNumber: txResult.blockNumber,
+          bridged: true
+        },
+        { transaction: t }
+      )
+
+      await t.commit()
+
+      return {
+        success: true,
+        bridged: true,
+        bridgeTransaction: bridgeTx,
+        transaction: transaction.toJSON(),
+        totalCost: targetGasCost + bridgeTx.bridgeCost
       }
-    }
-    transactions.set(txResult.transactionHash, transaction)
-
-    return {
-      success: true,
-      bridged: true,
-      bridgeTransaction: bridgeTx,
-      transaction,
-      totalCost: targetGasCost + bridgeTx.bridgeCost
+    } catch (error) {
+      await t.rollback()
+      throw error
     }
   }
 

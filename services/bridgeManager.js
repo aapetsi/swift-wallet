@@ -58,7 +58,7 @@ class BridgeManager {
           txHash: bridgeTxHash,
           type: 'bridge',
           fromUserId: userId,
-          toUserId: null,
+          toUserId: userId,
           chain: toChain,
           fromChain,
           toChain,
