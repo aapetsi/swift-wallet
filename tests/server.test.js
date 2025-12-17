@@ -81,11 +81,11 @@ describe('Test api endpoints', () => {
     expect(res.statusCode).toEqual(400)
   })
 
-  xit('POST /api/send with bridging', async () => {
+  it('POST /api/send with bridging', async () => {
     const res = await request(server)
       .post('/api/send')
       .send({ to: 'user1', from: 'user2', amount: 1001 })
-    console.log(res.body)
+
     expect(res.statusCode).toEqual(200)
     expect(res.body.success).toEqual(true)
     expect(res.body.bridged).toEqual(true)
