@@ -37,15 +37,33 @@ const Transaction = sequelize.define(
       }
     },
     chain: {
-      type: DataTypes.ENUM('ethereum', 'polygon', 'arbitrum', 'optimism'),
+      type: DataTypes.ENUM(
+        'ethereum',
+        'polygon',
+        'arbitrum',
+        'optimism',
+        'solana'
+      ),
       allowNull: false
     },
     fromChain: {
-      type: DataTypes.ENUM('ethereum', 'polygon', 'arbitrum', 'optimism'),
+      type: DataTypes.ENUM(
+        'ethereum',
+        'polygon',
+        'arbitrum',
+        'optimism',
+        'solana'
+      ),
       allowNull: true // Only for bridge transactions
     },
     toChain: {
-      type: DataTypes.ENUM('ethereum', 'polygon', 'arbitrum', 'optimism'),
+      type: DataTypes.ENUM(
+        'ethereum',
+        'polygon',
+        'arbitrum',
+        'optimism',
+        'solana'
+      ),
       allowNull: true // Only for bridge transactions
     },
     amount: {
