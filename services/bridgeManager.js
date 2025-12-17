@@ -55,7 +55,7 @@ class BridgeManager {
 
       const bridgeTransaction = await Transaction.create(
         {
-          txHash: bridgeTxHash,
+          txHash: bridgeTransactionHash,
           type: 'bridge',
           fromUserId: userId,
           toUserId: userId,
